@@ -4,97 +4,155 @@ Microsoft Windows [Version 10.0.22631.5039]
 C:\xampp\mysql\bin>mysql -u root -p
 Enter password:
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MariaDB connection id is 8
+Your MariaDB connection id is 72
 Server version: 10.4.27-MariaDB mariadb.org binary distribution
 
 Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-MariaDB [(none)]> create database dbpos;
-Query OK, 1 row affected (0.002 sec)
-
-MariaDB [(none)]> USE dbpos;
+MariaDB [(none)]> use dbkoperasi_sibmandiri;
 Database changed
-MariaDB [dbpos]> CREATE TABLE kartu (
-    -> id integer auto_increment primary key,
-    -> kode varchar(4) unique,
-    -> nama varchar(30) not null,
-    -> diskon double default 0,
-    -> iuran double default 0
-    -> );
-Query OK, 0 rows affected (0.048 sec)
 
-MariaDB [dbpos]> create table pelanggan(
-    ->   id int auto_increment primary key,
-    ->   kode varchar(10) unique,
-    ->   nama varchar(45),
-    ->   jk char(1),
-    ->   tmp_lahir varchar(30),
-    ->   tgl_lahir date,
-    ->   email varchar(45),
-    ->   kartu_id int not null references kartu(id));
-Query OK, 0 rows affected (0.082 sec)
+==== worksheet-2(1) ====
 
-MariaDB [dbpos]>  create table pesanan(
-    ->   id int not null auto_increment primary key,
-    ->   tanggal date,
-    ->   total double,
-    ->   pelanggan_id int not null references pelanggan(id));
-Query OK, 0 rows affected (0.019 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM produk WHERE kode NOT LIKE 'M%';
++----+------+------------------+------------+------------+------+----------+-----------------+
+| id | kode | nama             | harga_beli | harga_jual | stok | min_stok | jenis_produk_id |
++----+------+------------------+------------+------------+------+----------+-----------------+
+|  1 | TV01 | Televisi 21 inch |    3500000 |    5040000 |    5 |        2 |               1 |
+|  2 | TV02 | Televisi 40 inch |    5500000 |    7440000 |    4 |        2 |               1 |
+|  3 | K001 | Kulkas 2 pintu   |    3500000 |    4680000 |    6 |        2 |               1 |
+|  5 | TK01 | Teh Kotak        |       3000 |       3500 |    6 |       10 |               4 |
+|  6 | PC01 | PC Desktop HP    |    7000000 |    9600000 |    9 |        2 |               5 |
+|  7 | TB01 | Teh Botol        |       2000 |       2500 |   53 |       10 |               4 |
+|  8 | AC01 | Notebook Acer    |    8000000 |   10800000 |    7 |        2 |               5 |
+|  9 | LN01 | Notebook Lenovo  |    9000000 |   12000000 |    9 |        2 |               5 |
+| 10 | L004 | Laptop HP        |   12000000 |   13000000 |   20 |        5 |               5 |
++----+------+------------------+------------+------------+------+----------+-----------------+
+9 rows in set (0.001 sec)
 
-MariaDB [dbpos]> create table pembayaran(
-    ->   id int not null auto_increment primary key,
-    ->   nokuitansi varchar(10) unique,
-    ->   tanggal date,
-    ->   jumlah double,
-    ->   ke int,
-    ->   pesanan_id int not null references pesanan(id));
-Query OK, 0 rows affected (0.037 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM produk WHERE kode LIKE 'TV%';
++----+------+------------------+------------+------------+------+----------+-----------------+
+| id | kode | nama             | harga_beli | harga_jual | stok | min_stok | jenis_produk_id |
++----+------+------------------+------------+------------+------+----------+-----------------+
+|  1 | TV01 | Televisi 21 inch |    3500000 |    5040000 |    5 |        2 |               1 |
+|  2 | TV02 | Televisi 40 inch |    5500000 |    7440000 |    4 |        2 |               1 |
++----+------+------------------+------------+------------+------+----------+-----------------+
+2 rows in set (0.001 sec)
 
-MariaDB [dbpos]>  create table jenis_produk(
-    ->   id int not null auto_increment primary key,
-    ->   nama varchar(45));
-Query OK, 0 rows affected (0.023 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM pelanggan WHERE nama LIKE '%SA%';
++----+------+-------------+------+-----------+------------+------------------+----------+
+| id | kode | nama        | jk   | tmp_lahir | tgl_lahir  | email            | kartu_id |
++----+------+-------------+------+-----------+------------+------------------+----------+
+|  9 | C009 | Ahmad Hasan | L    | Surabaya  | 1992-10-15 | ahasan@gmail.com |        4 |
+| 10 | C010 | Cassanndra  | P    | Belfast   | 1990-11-20 | casa90@gmail.com |        1 |
++----+------+-------------+------+-----------+------------+------------------+----------+
+2 rows in set (0.001 sec)
 
-===tugas mandiri===
-MariaDB [dbpos]> CREATE TABLE produk (
-    ->     id INT(11),
-    ->     kode VARCHAR(10),
-    ->     nama VARCHAR(45),
-    ->     harga_beli DOUBLE,
-    ->     harga_jual DOUBLE,
-    ->     stok INT(11),
-    ->     min_stok INT(11),
-    ->     jenis_produk_id int not null references jenis_produk(id));
-Query OK, 0 rows affected (0.019 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM pelanggan WHERE tmp_lahir NOT LIKE 'Jakarta' AND nama LIKE '%yo%';
+Empty set (0.001 sec)
 
-MariaDB [dbpos]> CREATE TABLE pesanan_items (
-    ->     id INT(11),
-    ->     produk_id int not null references produk(id),
-    ->     pesanan_id int not null references pesanan(id),
-    ->     qty INT(11),
-    ->     harga DOUBLE
-    -> );
-Query OK, 0 rows affected (0.021 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM pelanggan WHERE nama LIKE '_A%';
++----+------+--------------+------+------------+------------+------------------+----------+
+| id | kode | nama         | jk   | tmp_lahir  | tgl_lahir  | email            | kartu_id |
++----+------+--------------+------+------------+------------+------------------+----------+
+|  2 | C002 | Pandan Wangi | P    | Yogyakarta | 1950-01-01 | wangi@gmail.com  |        2 |
+|  6 | C006 | Gayatri Dwi  | P    | Jakarta    | 1987-11-28 | gaya87@gmail.com |        1 |
+| 10 | C010 | Cassanndra   | P    | Belfast    | 1990-11-20 | casa90@gmail.com |        1 |
++----+------+--------------+------+------------+------------+------------------+----------+
+3 rows in set (0.001 sec)
 
-MariaDB [dbpos]> CREATE TABLE vendor (
-    ->     id INT(11),
-    ->     nomor VARCHAR(4),
-    ->     nama VARCHAR(40),
-    ->     kota VARCHAR(30),
-    ->     kontak VARCHAR(30)
-    -> );
-Query OK, 0 rows affected (0.021 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM produk ORDER BY harga_jual ASC LIMIT 1;
++----+------+-----------+------------+------------+------+----------+-----------------+
+| id | kode | nama      | harga_beli | harga_jual | stok | min_stok | jenis_produk_id |
++----+------+-----------+------------+------------+------+----------+-----------------+
+|  7 | TB01 | Teh Botol |       2000 |       2500 |   53 |       10 |               4 |
++----+------+-----------+------------+------------+------+----------+-----------------+
+1 row in set (0.001 sec)
 
-MariaDB [dbpos]> CREATE TABLE pembelian (
-    ->     id INT(11),
-    ->     tanggal VARCHAR(45),
-    ->     nomor VARCHAR(10),
-    ->     produk_id INT(11),
-    ->     jumlah INT(11),
-    ->     harga DOUBLE,
-    ->     vendor_id int not null references vendor(id));
-Query OK, 0 rows affected (0.019 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM produk ORDER BY stok DESC LIMIT 1;
++----+------+-----------+------------+------------+------+----------+-----------------+
+| id | kode | nama      | harga_beli | harga_jual | stok | min_stok | jenis_produk_id |
++----+------+-----------+------------+------------+------+----------+-----------------+
+|  7 | TB01 | Teh Botol |       2000 |       2500 |   53 |       10 |               4 |
++----+------+-----------+------------+------------+------+----------+-----------------+
+1 row in set (0.001 sec)
 
-MariaDB [dbpos]>
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM produk ORDER BY stok ASC LIMIT 2;
++----+------+------------------+------------+------------+------+----------+-----------------+
+| id | kode | nama             | harga_beli | harga_jual | stok | min_stok | jenis_produk_id |
++----+------+------------------+------------+------------+------+----------+-----------------+
+|  2 | TV02 | Televisi 40 inch |    5500000 |    7440000 |    4 |        2 |               1 |
+|  4 | M001 | Meja Makan       |     500000 |     600000 |    4 |        3 |               2 |
++----+------+------------------+------------+------------+------+----------+-----------------+
+2 rows in set (0.001 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM pelanggan ORDER BY tgl_lahir DESC LIMIT 1;
++----+------+--------------+------+-----------+------------+------------------+----------+
+| id | kode | nama         | jk   | tmp_lahir | tgl_lahir  | email            | kartu_id |
++----+------+--------------+------+-----------+------------+------------------+----------+
+|  1 | C001 | Agung Sedayu | L    | Solo      | 2010-01-01 | sedayu@gmail.com |        1 |
++----+------+--------------+------+-----------+------------+------------------+----------+
+1 row in set (0.001 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM pelanggan ORDER BY tgl_lahir ASC LIMIT 1;
++----+------+--------------+------+------------+------------+-----------------+----------+
+| id | kode | nama         | jk   | tmp_lahir  | tgl_lahir  | email           | kartu_id |
++----+------+--------------+------+------------+------------+-----------------+----------+
+|  2 | C002 | Pandan Wangi | P    | Yogyakarta | 1950-01-01 | wangi@gmail.com |        2 |
++----+------+--------------+------+------------+------------+-----------------+----------+
+1 row in set (0.001 sec)
+
+==== end worksheet-2(1) ====
+
+==== worksheet-3(1) ====
+
+MariaDB [dbkoperasi_sibmandiri]> SELECT
+    -> COUNT(*) AS JumlahProduk,
+    -> MIN(harga_jual) AS MinimalJual,
+    -> MAX(harga_jual) AS MaksimalJual,
+    -> AVG(harga_jual) AS RataRataJual
+    -> FROM
+    -> produk
+    -> WHERE
+    -> harga_jual < (SELECT AVG(harga_jual) FROM produk);
++--------------+-------------+--------------+--------------+
+| JumlahProduk | MinimalJual | MaksimalJual | RataRataJual |
++--------------+-------------+--------------+--------------+
+|            5 |        2500 |      5040000 |      2065200 |
++--------------+-------------+--------------+--------------+
+1 row in set (0.001 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> SELECT pelanggan.nama, kartu.nama as kartu, kartu.diskon as diskon FROM pelanggan INNER JOIN kartu ON pelanggan.kartu_id = kartu.id;
++---------------+---------------+--------+
+| nama          | kartu         | diskon |
++---------------+---------------+--------+
+| Agung Sedayu  | Gold Utama    |   0.05 |
+| Sekar Mirah   | Gold Utama    |   0.05 |
+| Gayatri Dwi   | Gold Utama    |   0.05 |
+| Dewi Gyat     | Gold Utama    |   0.05 |
+| Cassanndra    | Gold Utama    |   0.05 |
+| Pandan Wangi  | Platinum Jaya |    0.1 |
+| Pradabashu    | Platinum Jaya |    0.1 |
+| Swandaru Geni | Non Member    |      0 |
+| Andre Haru    | Non Member    |      0 |
+| Ahmad Hasan   | Non Member    |      0 |
++---------------+---------------+--------+
+10 rows in set (0.001 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> SELECT pelanggan.nama, kartu.nama as kartu, kartu.diskon as diskon FROM pelanggan INNER JOIN kartu ON pelanggan.kartu_id = kartu.id WHERE kartu.diskon > 0.03;
++--------------+---------------+--------+
+| nama         | kartu         | diskon |
++--------------+---------------+--------+
+| Agung Sedayu | Gold Utama    |   0.05 |
+| Sekar Mirah  | Gold Utama    |   0.05 |
+| Gayatri Dwi  | Gold Utama    |   0.05 |
+| Dewi Gyat    | Gold Utama    |   0.05 |
+| Cassanndra   | Gold Utama    |   0.05 |
+| Pandan Wangi | Platinum Jaya |    0.1 |
+| Pradabashu   | Platinum Jaya |    0.1 |
++--------------+---------------+--------+
+7 rows in set (0.001 sec)
+
+==== end worksheet-3(1) ====
