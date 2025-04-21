@@ -1,5 +1,3 @@
-Microsoft Windows [Version 10.0.22631.5039]
-(c) Microsoft Corporation. All rights reserved.
 
 C:\xampp\mysql\bin>mysql -u root -p
 Enter password:
@@ -11,90 +9,102 @@ Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-MariaDB [(none)]> create database dbpos;
-Query OK, 1 row affected (0.002 sec)
-
-MariaDB [(none)]> USE dbpos;
+MariaDB [(none)]> use dbkoperasi_sibmandiri;
 Database changed
-MariaDB [dbpos]> CREATE TABLE kartu (
-    -> id integer auto_increment primary key,
-    -> kode varchar(4) unique,
-    -> nama varchar(30) not null,
-    -> diskon double default 0,
-    -> iuran double default 0
-    -> );
-Query OK, 0 rows affected (0.048 sec)
 
-MariaDB [dbpos]> create table pelanggan(
-    ->   id int auto_increment primary key,
-    ->   kode varchar(10) unique,
-    ->   nama varchar(45),
-    ->   jk char(1),
-    ->   tmp_lahir varchar(30),
-    ->   tgl_lahir date,
-    ->   email varchar(45),
-    ->   kartu_id int not null references kartu(id));
-Query OK, 0 rows affected (0.082 sec)
+MariaDB [dbkoperasi_sibmandiri]> CREATE VIEW pesanan_pelanggan_kartu
+    -> AS SELECT pesanan.id, pesanan.tanggal, pesanan. total, pelanggan.kode, pelanggan.nama,
+    -> kartu.nama as nama_kartu, kartu.diskon
+    -> FROM pesanan INNER JOIN pelanggan ON pesanan.pelanggan_id = pelanggan.id
+    -> INNER JOIN kartu ON pelanggan.kartu_id = kartu.id;
+Query OK, 0 rows affected (0.007 sec)
 
-MariaDB [dbpos]>  create table pesanan(
-    ->   id int not null auto_increment primary key,
-    ->   tanggal date,
-    ->   total double,
-    ->   pelanggan_id int not null references pelanggan(id));
-Query OK, 0 rows affected (0.019 sec)
+MariaDB [dbkoperasi_sibmandiri]> Select * FROM pesanan_pelanggan_kartu;
++----+------------+---------+------+---------------+---------------+--------+
+| id | tanggal    | total   | kode | nama          | nama_kartu    | diskon |
++----+------------+---------+------+---------------+---------------+--------+
+|  1 | 2015-11-04 | 9720000 | C001 | Agung Sedayu  | Gold Utama    |   0.05 |
+|  2 | 2015-11-04 |   17500 | C003 | Sekar Mirah   | Gold Utama    |   0.05 |
+|  3 | 2015-11-04 |       0 | C006 | Gayatri Dwi   | Gold Utama    |   0.05 |
+|  4 | 2015-11-04 |       0 | C007 | Dewi Gyat     | Gold Utama    |   0.05 |
+|  5 | 2015-11-04 |       0 | C010 | Cassanndra    | Gold Utama    |   0.05 |
+|  6 | 2015-11-04 |       0 | C002 | Pandan Wangi  | Platinum Jaya |    0.1 |
+|  7 | 2015-11-04 |       0 | C005 | Pradabashu    | Platinum Jaya |    0.1 |
+|  8 | 2015-11-04 |       0 | C004 | Swandaru Geni | Non Member    |      0 |
+|  9 | 2015-11-04 |       0 | C008 | Andre Haru    | Non Member    |      0 |
+| 10 | 2015-11-04 |       0 | C009 | Ahmad Hasan   | Non Member    |      0 |
++----+------------+---------+------+---------------+---------------+--------+
+10 rows in set (0.001 sec)
 
-MariaDB [dbpos]> create table pembayaran(
-    ->   id int not null auto_increment primary key,
-    ->   nokuitansi varchar(10) unique,
-    ->   tanggal date,
-    ->   jumlah double,
-    ->   ke int,
-    ->   pesanan_id int not null references pesanan(id));
-Query OK, 0 rows affected (0.037 sec)
+MariaDB [dbkoperasi_sibmandiri]> CREATE VIEW pembelian_produk_vendor
+    -> AS SELECT pembelian.id,pembelian.nomor,pembelian.jumlah,pembelian.harga, produk.nama as nama_produk, vendor.nama as nama_vendor, vendor.kontak
+    -> FROM pembelian INNER JOIN produk ON pembelian.produk_id = produk.id
+    -> INNER JOIN vendor ON pembelian.vendor_id = vendor.id;
+Query OK, 0 rows affected (0.006 sec)
 
-MariaDB [dbpos]>  create table jenis_produk(
-    ->   id int not null auto_increment primary key,
-    ->   nama varchar(45));
-Query OK, 0 rows affected (0.023 sec)
+MariaDB [dbkoperasi_sibmandiri]> Select * FROM pembelian_produk_vendor;
++----+-------+--------+---------+------------------+----------------------+-----------------+
+| id | nomor | jumlah | harga   | nama_produk      | nama_vendor          | kontak          |
++----+-------+--------+---------+------------------+----------------------+-----------------+
+|  1 | P001  |      2 | 3500000 | Televisi 21 inch | PT Guna Samudra      | Ali Nurdin      |
+|  2 | P002  |      5 | 5500000 | Televisi 40 inch | PT Pondok C9         | Putri Ramadhani |
+|  3 | P003  |      5 | 5400000 | Televisi 40 inch | PT Guna Samudra      | Ali Nurdin      |
+|  4 | P004  |    200 |    1800 | Teh Botol        | CV Jaya Raya Semesta | Dwi Rahayu      |
+|  5 | P005  |    100 |    2300 | Teh Kotak        | CV Jaya Raya Semesta | Dwi Rahayu      |
++----+-------+--------+---------+------------------+----------------------+-----------------+
+5 rows in set (0.002 sec)
 
-===tugas mandiri===
-MariaDB [dbpos]> CREATE TABLE produk (
-    ->     id INT(11),
-    ->     kode VARCHAR(10),
-    ->     nama VARCHAR(45),
-    ->     harga_beli DOUBLE,
-    ->     harga_jual DOUBLE,
-    ->     stok INT(11),
-    ->     min_stok INT(11),
-    ->     jenis_produk_id int not null references jenis_produk(id));
-Query OK, 0 rows affected (0.019 sec)
+MariaDB [dbkoperasi_sibmandiri]> CREATE VIEW pesanan_pelanggan_produk_jenisProduk_pesananItems
+    -> AS SELECT pesanan.id,pesanan.tanggal,pesanan.total, pelanggan.nama,produk.kode, produk.nama as nama_produk, jenis_produk.nama as jenis, pesanan_items.qty, pesanan_items.harga
+    -> FROM pesanan_items INNER JOIN produk ON pesanan_items.produk_id = produk.id
+    -> INNER JOIN jenis_produk ON produk.jenis_produk_id = jenis_produk.id
+    -> INNER JOIN pesanan ON pesanan_items.pesanan_id = pesanan.id
+    -> INNER JOIN pelanggan ON pesanan.pelanggan_id = pelanggan.id;
+Query OK, 0 rows affected (0.011 sec)
 
-MariaDB [dbpos]> CREATE TABLE pesanan_items (
-    ->     id INT(11),
-    ->     produk_id int not null references produk(id),
-    ->     pesanan_id int not null references pesanan(id),
-    ->     qty INT(11),
-    ->     harga DOUBLE
-    -> );
-Query OK, 0 rows affected (0.021 sec)
+MariaDB [dbkoperasi_sibmandiri]> SELECT * FROM pesanan_pelanggan_produk_jenisProduk_pesananItems;
++----+------------+---------+--------------+------+------------------+------------+------+----------+
+| id | tanggal    | total   | nama         | kode | nama_produk      | jenis      | qty  | harga    |
++----+------------+---------+--------------+------+------------------+------------+------+----------+
+|  1 | 2015-11-04 | 9720000 | Agung Sedayu | TV01 | Televisi 21 inch | elektronik |    1 |  5040000 |
+|  1 | 2015-11-04 | 9720000 | Agung Sedayu | K001 | Kulkas 2 pintu   | elektronik |    1 |  4680000 |
+|  3 | 2015-11-04 |       0 | Gayatri Dwi  | TV01 | Televisi 21 inch | elektronik |    1 |  5040000 |
+|  2 | 2015-11-04 |   17500 | Sekar Mirah  | TV01 | Televisi 21 inch | elektronik |    3 | 15000000 |
+|  2 | 2015-11-04 |   17500 | Sekar Mirah  | TK01 | Teh Kotak        | minuman    |    5 |     3500 |
+|  3 | 2015-11-04 |       0 | Gayatri Dwi  | TK01 | Teh Kotak        | minuman    |   10 |     3500 |
+|  5 | 2015-11-04 |       0 | Cassanndra   | TK01 | Teh Kotak        | minuman    |   10 |     3500 |
+|  6 | 2015-11-04 |       0 | Pandan Wangi | TK01 | Teh Kotak        | minuman    |   20 |     3500 |
++----+------------+---------+--------------+------+------------------+------------+------+----------+
+8 rows in set (0.001 sec)
 
-MariaDB [dbpos]> CREATE TABLE vendor (
-    ->     id INT(11),
-    ->     nomor VARCHAR(4),
-    ->     nama VARCHAR(40),
-    ->     kota VARCHAR(30),
-    ->     kontak VARCHAR(30)
-    -> );
-Query OK, 0 rows affected (0.021 sec)
+MariaDB [dbkoperasi_sibmandiri]> START TRANSACTION;
+Query OK, 0 rows affected (0.000 sec)
 
-MariaDB [dbpos]> CREATE TABLE pembelian (
-    ->     id INT(11),
-    ->     tanggal VARCHAR(45),
-    ->     nomor VARCHAR(10),
-    ->     produk_id INT(11),
-    ->     jumlah INT(11),
-    ->     harga DOUBLE,
-    ->     vendor_id int not null references vendor(id));
-Query OK, 0 rows affected (0.019 sec)
+MariaDB [dbkoperasi_sibmandiri]> INSERT INTO produk (kode,nama,harga_beli,harga_jual,stok,min_stok,jenis_produk_id) VALUES
+    -> ('PS001','Playstation 1',500000,1000000,6,3,1),
+    -> ('PS002','Playstation 2',800000,1300000,8,4,1),
+    -> ('PS003','Playstation 5',9000000,12000000,5,3,1);
+Query OK, 3 rows affected (0.009 sec)
+Records: 3  Duplicates: 0  Warnings: 0
 
-MariaDB [dbpos]>
+MariaDB [dbkoperasi_sibmandiri]> UPDATE produk SET stok = 40 WHERE kode ='PS001';
+Query OK, 1 row affected (0.001 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbkoperasi_sibmandiri]> SAVEPOINT sebelum_hapus_pembayaran;
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> DELETE FROM pembayaran WHERE id = 5;
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> ROLLBACK TO SAVEPOINT sebelum_hapus_pembayaran;
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [dbkoperasi_sibmandiri]> UPDATE kartu_iuran SET jumlah_iuran = 50000 WHERE id = 2;
+ERROR 1146 (42S02): Table 'dbkoperasi_sibmandiri.kartu_iuran' doesn't exist
+MariaDB [dbkoperasi_sibmandiri]> UPDATE kartu SET iuran = 100000 WHERE id = 2;
+Query OK, 1 row affected (0.000 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [dbkoperasi_sibmandiri]> COMMIT;
+Query OK, 0 rows affected (0.003 sec)
